@@ -2,8 +2,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Moon, Sun, User } from "lucide-react";
+import { Moon, Sun, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface HeaderProps {
   className?: string;
@@ -12,6 +22,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ className }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   // Initialize theme on component mount
@@ -38,7 +49,10 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       )}
     >
       <div className="flex items-center space-x-1">
-        <span className="font-semibold text-lg animate-fade-in">
+        <span 
+          className="font-semibold text-lg animate-fade-in cursor-pointer" 
+          onClick={() => navigate("/")}
+        >
           Daily<span className="text-primary">Hero</span>
         </span>
       </div>
@@ -55,29 +69,34 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         >
           Home
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "rounded-full px-4 transition-all duration-300",
-            isActive("/reports") && "bg-accent text-foreground"
-          )}
-          onClick={() => navigate("/reports")}
-        >
-          Reports
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "rounded-full px-4 transition-all duration-300",
-            isActive("/profile") && "bg-accent text-foreground"
-          )}
-          onClick={() => navigate("/profile")}
-        >
-          <User size={18} className="mr-1" />
-          Profile
-        </Button>
+        
+        {isAuthenticated && (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-full px-4 transition-all duration-300",
+                isActive("/dashboard") && "bg-accent text-foreground"
+              )}
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "rounded-full px-4 transition-all duration-300",
+                isActive("/reports") && "bg-accent text-foreground"
+              )}
+              onClick={() => navigate("/reports")}
+            >
+              Reports
+            </Button>
+          </>
+        )}
+        
         <Button
           variant="ghost"
           size="icon"
@@ -90,6 +109,47 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             <Sun size={18} className="text-foreground/80" />
           )}
         </Button>
+        
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="rounded-full ml-2 flex items-center gap-2"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.avatar} />
+                  <AvatarFallback className="text-xs">
+                    {user?.name?.split(" ").map(n => n[0]).join("") || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden sm:inline-block">{user?.name?.split(" ")[0]}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <User size={16} className="mr-2" />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive" onClick={() => logout()}>
+                <LogOut size={16} className="mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => navigate("/login")}
+            className="ml-2"
+          >
+            Login
+          </Button>
+        )}
       </nav>
     </header>
   );

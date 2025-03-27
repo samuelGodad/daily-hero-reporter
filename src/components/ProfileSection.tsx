@@ -14,26 +14,22 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProfileSectionProps {
   className?: string;
 }
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({ className }) => {
-  // Mock user data - in a real app, this would come from authentication
-  const user = {
-    name: "Alex Johnson",
-    email: "alex.johnson@company.com",
-    phone: "+1 (555) 123-4567",
-    department: "Frontend Development",
-    avatar: "", // Would be a URL in a real app
-    reportsSubmitted: 42,
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
   };
 
-  const handleLogout = () => {
-    toast.success("Logged out successfully");
-    // In a real app, this would handle proper logout
-  };
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -60,7 +56,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className }) => {
             </div>
             <div className="flex items-center text-sm">
               <Phone size={16} className="mr-3 text-muted-foreground" />
-              <span>{user.phone}</span>
+              <span>{user.phone || "Not provided"}</span>
             </div>
             <div className="flex items-center text-sm">
               <Building size={16} className="mr-3 text-muted-foreground" />
@@ -68,7 +64,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className }) => {
             </div>
             <div className="flex items-center text-sm">
               <FileText size={16} className="mr-3 text-muted-foreground" />
-              <span>{user.reportsSubmitted} Reports Submitted</span>
+              <span>42 Reports Submitted</span>
             </div>
           </div>
         </div>

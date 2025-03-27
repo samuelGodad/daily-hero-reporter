@@ -5,6 +5,9 @@ import ProfileSection from "@/components/ProfileSection";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, FileText, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import ReportService from "@/services/reports";
 
 interface StatsCardProps {
   title: string;
@@ -28,6 +31,13 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon, description }
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { user } = useAuth();
+  
+  // Get user reports
+  const { data: reports = [] } = useQuery({
+    queryKey: ['reports'],
+    queryFn: ReportService.getReports
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -56,7 +66,7 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <StatsCard
                     title="Total Reports"
-                    value="42"
+                    value={reports.length.toString()}
                     icon={<FileText size={16} />}
                     description="Reports submitted in the last 12 months"
                   />
@@ -76,49 +86,61 @@ const Profile = () => {
                 
                 <Card className="p-6 bg-card/50 backdrop-blur-sm">
                   <h2 className="text-lg font-medium mb-4">Recent Activity</h2>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-4">
-                      <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center">
-                        <FileText size={16} />
-                      </div>
-                      <div>
-                        <p className="text-sm">You submitted <span className="font-medium">API Integration Complete</span></p>
-                        <p className="text-xs text-muted-foreground">3 days ago</p>
-                      </div>
+                  {reports.length > 0 ? (
+                    <div className="space-y-4">
+                      {reports.slice(0, 3).map(report => (
+                        <div key={report.id} className="flex items-start space-x-4">
+                          <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center">
+                            <FileText size={16} />
+                          </div>
+                          <div>
+                            <p className="text-sm">You submitted <span className="font-medium">{report.title}</span></p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-start space-x-4">
-                      <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center">
-                        <FileText size={16} />
-                      </div>
-                      <div>
-                        <p className="text-sm">You submitted <span className="font-medium">Fixed Critical UI Bug</span></p>
-                        <p className="text-xs text-muted-foreground">4 days ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-4">
-                      <div className="h-9 w-9 rounded-full bg-secondary flex items-center justify-center">
-                        <FileText size={16} />
-                      </div>
-                      <div>
-                        <p className="text-sm">You submitted <span className="font-medium">Completed User Authentication Flow</span></p>
-                        <p className="text-xs text-muted-foreground">5 days ago</p>
-                      </div>
-                    </div>
-                  </div>
+                  ) : (
+                    <p className="text-muted-foreground">No recent activity found.</p>
+                  )}
                 </Card>
               </TabsContent>
               
               <TabsContent value="reports">
-                <Card className="p-6 bg-card/50 backdrop-blur-sm h-[400px] flex items-center justify-center">
-                  <div className="text-center">
-                    <FileText size={48} className="mx-auto text-muted-foreground/50 mb-4" />
-                    <h3 className="text-lg font-medium">Report Archive</h3>
-                    <p className="text-muted-foreground text-sm mt-2">
-                      View and manage all your submitted reports
-                      <br />
-                      (Not implemented in this demo)
-                    </p>
-                  </div>
+                <Card className="p-6 bg-card/50 backdrop-blur-sm">
+                  {reports.length > 0 ? (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-medium mb-4">Your Report Archive</h3>
+                      <div className="divide-y divide-border">
+                        {reports.map((report) => (
+                          <div key={report.id} className="py-4">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium">{report.title}</h4>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {new Date(report.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <FileText size={16} className="text-muted-foreground" />
+                            </div>
+                            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                              {report.content}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <FileText size={48} className="mx-auto text-muted-foreground/50 mb-4" />
+                      <h3 className="text-lg font-medium">No Reports Found</h3>
+                      <p className="text-muted-foreground text-sm mt-2">
+                        You haven't submitted any reports yet.
+                      </p>
+                    </div>
+                  )}
                 </Card>
               </TabsContent>
               
@@ -130,7 +152,7 @@ const Profile = () => {
                     <p className="text-muted-foreground text-sm mt-2">
                       Visualize your reporting patterns and productivity trends
                       <br />
-                      (Not implemented in this demo)
+                      (This feature will be implemented soon)
                     </p>
                   </div>
                 </Card>

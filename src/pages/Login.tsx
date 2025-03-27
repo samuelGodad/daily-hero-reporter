@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +8,23 @@ import { Separator } from "@/components/ui/separator";
 import { Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface LocationState {
+  from?: {
+    pathname: string;
+  };
+}
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
+  // Get the redirect path from location state, or default to /dashboard
+  const from = (location.state as LocationState)?.from?.pathname || "/dashboard";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,15 +34,11 @@ const Login = () => {
       return;
     }
     
-    setIsLoading(true);
+    const success = await login(email, password);
     
-    // Simulate authentication
-    setTimeout(() => {
-      // In a real app, this would validate credentials
-      toast.success("Logged in successfully");
-      setIsLoading(false);
-      navigate("/reports");
-    }, 1000);
+    if (success) {
+      navigate(from, { replace: true });
+    }
   };
 
   return (

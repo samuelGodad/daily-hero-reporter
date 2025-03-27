@@ -2,7 +2,7 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MoreHorizontal } from "lucide-react";
+import { Calendar, Clock, MoreHorizontal, Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,44 +11,63 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface Report {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  content: string;
-}
+import { Report } from "@/services/reports";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface ReportHistoryProps {
   className?: string;
+  reports: Report[];
+  isLoading: boolean;
+  onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
 }
 
-const ReportHistory: React.FC<ReportHistoryProps> = ({ className }) => {
-  // Sample data - in a real app, this would come from an API or state management
-  const reports: Report[] = [
-    {
-      id: "1",
-      title: "Completed User Authentication Flow",
-      date: "May 15, 2023",
-      time: "5:30 PM",
-      content: "Implemented login, registration, and password reset functionality using Firebase Authentication."
-    },
-    {
-      id: "2",
-      title: "Fixed Critical UI Bug",
-      date: "May 14, 2023",
-      time: "4:45 PM",
-      content: "Resolved issue with responsive layout breaking on tablet devices. Implemented proper media queries."
-    },
-    {
-      id: "3",
-      title: "API Integration Complete",
-      date: "May 13, 2023",
-      time: "5:15 PM",
-      content: "Successfully integrated with payment gateway API. All transactions now process correctly."
+const ReportHistory: React.FC<ReportHistoryProps> = ({
+  className,
+  reports,
+  isLoading,
+  onDelete,
+  onView
+}) => {
+  const navigate = useNavigate();
+
+  const handleViewReport = (id: string) => {
+    if (onView) {
+      onView(id);
+    } else {
+      navigate(`/reports/${id}`);
     }
-  ];
+  };
+
+  if (isLoading) {
+    return (
+      <div className={`${className}`}>
+        <h2 className="text-2xl font-medium mb-6">Recent Reports</h2>
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (reports.length === 0) {
+    return (
+      <div className={`${className}`}>
+        <h2 className="text-2xl font-medium mb-6">Recent Reports</h2>
+        <Card className="p-8 bg-card/50 backdrop-blur-sm text-center">
+          <p className="text-muted-foreground">No reports found</p>
+          <Button 
+            variant="outline" 
+            className="mt-4"
+            onClick={() => navigate('/reports')}
+          >
+            Create your first report
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -64,9 +83,9 @@ const ReportHistory: React.FC<ReportHistoryProps> = ({ className }) => {
               <h3 className="font-medium text-lg">{report.title}</h3>
               <div className="flex items-center mt-2 text-muted-foreground text-sm">
                 <Calendar size={14} className="mr-1" />
-                <span>{report.date}</span>
+                <span>{format(new Date(report.createdAt), 'MMM dd, yyyy')}</span>
                 <Clock size={14} className="ml-4 mr-1" />
-                <span>{report.time}</span>
+                <span>{format(new Date(report.createdAt), 'h:mm a')}</span>
               </div>
             </div>
             
@@ -79,9 +98,18 @@ const ReportHistory: React.FC<ReportHistoryProps> = ({ className }) => {
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>View Details</DropdownMenuItem>
-                <DropdownMenuItem>Edit Report</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleViewReport(report.id)}>
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate(`/reports/${report.id}/edit`)}>
+                  Edit Report
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-destructive"
+                  onClick={() => onDelete && onDelete(report.id)}
+                >
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -90,7 +118,12 @@ const ReportHistory: React.FC<ReportHistoryProps> = ({ className }) => {
             {report.content}
           </p>
           
-          <Button variant="ghost" size="sm" className="mt-2 text-primary text-sm px-0">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="mt-2 text-primary text-sm px-0"
+            onClick={() => handleViewReport(report.id)}
+          >
             Read more
           </Button>
         </Card>

@@ -4,37 +4,52 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { Check, Send } from "lucide-react";
+import { Send } from "lucide-react";
+import ReportService, { CreateReportDto } from "@/services/reports";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ReportFormProps {
   className?: string;
+  onSuccess?: () => void;
 }
 
-const ReportForm: React.FC<ReportFormProps> = ({ className }) => {
+const ReportForm: React.FC<ReportFormProps> = ({ className, onSuccess }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!title.trim() || !content.trim()) {
-      toast.error("Please fill in all fields");
       return;
     }
     
     setSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      // Successful submission
-      toast.success("Report submitted successfully");
+    const reportData: CreateReportDto = {
+      title: title.trim(),
+      content: content.trim()
+    };
+    
+    const result = await ReportService.createReport(reportData);
+    
+    if (result) {
       // Clear form
       setTitle("");
       setContent("");
-      setSubmitting(false);
-    }, 800);
+      
+      // Invalidate reports query to trigger refetch
+      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
+    }
+    
+    setSubmitting(false);
   };
 
   return (
