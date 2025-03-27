@@ -1,92 +1,178 @@
+# Daily Hero Reporter
 
-# Reports Application
-
-A full-stack application for creating, managing, and tracking reports.
+A full-stack application for managing daily reports, built with Vue.js, NestJS, and PostgreSQL.
 
 ## Project Overview
 
-This Reports application allows users to:
-- Create detailed reports with rich content
-- Track report history and changes
-- Manage user profiles and preferences
-- View analytics and insights from report data
+Daily Hero Reporter is a web application that allows users to:
+- Register and login securely
+- Create and manage daily reports
+- View and track report history
+- Manage user profiles
 
-## Technology Stack
+## Tech Stack
 
 ### Frontend
-- React with TypeScript
+- Vue.js 3
+- Vite
+- Vuex for state management
 - Tailwind CSS for styling
-- shadcn/ui component library
-- React Query for data fetching
-- React Router for navigation
+- TypeScript
 
 ### Backend
-- NestJS (Node.js framework)
-- TypeORM for database operations
-- PostgreSQL database
-- JWT authentication
+- NestJS
+- PostgreSQL
+- TypeORM
+- JWT Authentication
+- Docker
+
+
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
-- PostgreSQL database
+- Node.js (v16 or higher)
+- Docker and Docker Compose
+- npm or yarn package manager
 
-### Running the Frontend
-```sh
-# Install dependencies
-npm install
+### Quick Start
 
-# Start the development server
-npm run dev
+1. **Clone the repository**
+```bash
+git clone https://github.com/samuelGodad/daily-hero-reporter.git
+cd daily-hero-reporter
 ```
 
-### Running the Backend
-```sh
-# Navigate to the backend directory
+2. **Start the database**
+```bash
 cd backend
+docker compose up -d
+```
 
-# Install dependencies
+3. **Start the backend server**
+```bash
+cd backend
 npm install
-
-# Start the development server
 npm run start:dev
 ```
 
-### Database Setup
-The application uses PostgreSQL. You can run it locally or use the provided Docker Compose configuration:
-
-```sh
-# From the backend directory
-docker-compose up -d
+4. **Start the frontend application**
+```bash
+cd frontend
+npm install
+npm run dev
 ```
+
+The application will be available at:
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:3000
+
+## Detailed Setup Instructions
+
+### Backend Setup
+See [backend README](backend/README.md) for detailed backend setup instructions.
+
+### Frontend Setup
+See [frontend README](frontend/README.md) for detailed frontend setup instructions.
 
 ## Features
 
-- **User Authentication**: Secure login and registration system
-- **Report Creation**: Create detailed reports with structured data
-- **Report History**: Track changes and view previous versions
-- **User Profiles**: Manage personal information and preferences
-- **Analytics**: Gain insights from report data
+### User Management
+- User registration and authentication
+- JWT-based secure login
+- User profile management
 
-## API Endpoints
+### Report Management
+- Create new daily reports
+- View report history
+- Edit existing reports
+- Delete reports
+- Filter and search reports
 
-### Authentication
-- POST /api/auth/register - Register a new user
-- POST /api/auth/login - Log in and get JWT token
-
-### Reports
-- GET /api/reports - Get all reports for the current user
-- GET /api/reports/:id - Get a specific report
-- POST /api/reports - Create a new report
-- PATCH /api/reports/:id - Update a report
-- DELETE /api/reports/:id - Delete a report
-
-### Users
-- GET /api/users/:id - Get user information
-- PATCH /api/users/:id - Update user information
+### Security Features
+- JWT authentication
+- Password hashing
+- Protected routes
+- CORS configuration
 
 ## Development
 
-This project was created with [Lovable](https://lovable.dev).
+### Code Style
+- Follow TypeScript best practices
+- Use ESLint and Prettier for code formatting
+- Write unit tests for new features
+- Follow Git commit conventions
+
+### Testing
+```bash
+# Backend tests
+cd backend
+npm run test
+
+# Frontend tests
+cd frontend
+npm run test
+```
+
+## Deployment
+
+### Production Build
+```bash
+# Build backend
+cd backend
+npm run build
+npm run start:prod
+
+# Build frontend
+cd frontend
+npm run build
+```
+
+### Docker Deployment
+The application can be deployed using Docker:
+```bash
+docker compose -f docker-compose.yml up -d
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Troubleshooting
+
+### Common Issues
+1. **Database Connection Issues**
+   - Ensure Docker is running
+   - Check database container status
+   - Verify environment variables
+
+2. **API Connection Issues**
+   - Verify backend service is running
+   - Check CORS configuration
+   - Validate API endpoints
+
+3. **Frontend Issues**
+   - Clear browser cache
+   - Check console for errors
+   - Verify environment variables
+
+## Support
+
+For support:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation in each component's README
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- NestJS team for the amazing framework
+- Vue.js team for the frontend framework
+- All contributors and maintainers
