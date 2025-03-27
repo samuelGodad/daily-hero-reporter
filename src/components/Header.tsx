@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Moon, Sun, User } from "lucide-react";
@@ -12,7 +12,13 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ className }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  // Initialize theme on component mount
+  useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setTheme(isDarkMode ? "dark" : "light");
+  }, []);
 
   // Toggle between light and dark mode
   const toggleTheme = () => {
