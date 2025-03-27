@@ -1,69 +1,92 @@
-# Welcome to your Lovable project
 
-## Project info
+# Reports Application
 
-**URL**: https://lovable.dev/projects/2fbbddd4-173b-47df-84fd-54b92c75d523
+A full-stack application for creating, managing, and tracking reports.
 
-## How can I edit this code?
+## Project Overview
 
-There are several ways of editing your application.
+This Reports application allows users to:
+- Create detailed reports with rich content
+- Track report history and changes
+- Manage user profiles and preferences
+- View analytics and insights from report data
 
-**Use Lovable**
+## Technology Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2fbbddd4-173b-47df-84fd-54b92c75d523) and start prompting.
+### Frontend
+- React with TypeScript
+- Tailwind CSS for styling
+- shadcn/ui component library
+- React Query for data fetching
+- React Router for navigation
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- NestJS (Node.js framework)
+- TypeORM for database operations
+- PostgreSQL database
+- JWT authentication
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- PostgreSQL database
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+### Running the Frontend
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Running the Backend
+```sh
+# Navigate to the backend directory
+cd backend
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+# Install dependencies
+npm install
 
-**Use GitHub Codespaces**
+# Start the development server
+npm run start:dev
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Database Setup
+The application uses PostgreSQL. You can run it locally or use the provided Docker Compose configuration:
 
-## What technologies are used for this project?
+```sh
+# From the backend directory
+docker-compose up -d
+```
 
-This project is built with .
+## Features
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **User Authentication**: Secure login and registration system
+- **Report Creation**: Create detailed reports with structured data
+- **Report History**: Track changes and view previous versions
+- **User Profiles**: Manage personal information and preferences
+- **Analytics**: Gain insights from report data
 
-## How can I deploy this project?
+## API Endpoints
 
-Simply open [Lovable](https://lovable.dev/projects/2fbbddd4-173b-47df-84fd-54b92c75d523) and click on Share -> Publish.
+### Authentication
+- POST /api/auth/register - Register a new user
+- POST /api/auth/login - Log in and get JWT token
 
-## I want to use a custom domain - is that possible?
+### Reports
+- GET /api/reports - Get all reports for the current user
+- GET /api/reports/:id - Get a specific report
+- POST /api/reports - Create a new report
+- PATCH /api/reports/:id - Update a report
+- DELETE /api/reports/:id - Delete a report
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### Users
+- GET /api/users/:id - Get user information
+- PATCH /api/users/:id - Update user information
+
+## Development
+
+This project was created with [Lovable](https://lovable.dev).
