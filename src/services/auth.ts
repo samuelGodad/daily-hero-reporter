@@ -16,6 +16,13 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface SignupData {
+  name: string;
+  email: string;
+  password: string;
+  department: string;
+}
+
 export interface AuthResponse {
   user: User;
   token: string;
@@ -34,6 +41,22 @@ const AuthService = {
       return user;
     } catch (error) {
       toast.error('Login failed. Please check your credentials.');
+      return null;
+    }
+  },
+  
+  async signup(data: SignupData): Promise<User | null> {
+    try {
+      const response = await api.post<AuthResponse>('/auth/register', data);
+      const { user, token } = response.data;
+      
+      // Store token and user data
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      return user;
+    } catch (error) {
+      toast.error('Registration failed. Please try again later.');
       return null;
     }
   },

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AuthService, { User } from '@/services/auth';
+import AuthService, { User, SignupData } from '@/services/auth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -9,6 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  signup: (data: SignupData) => Promise<boolean>;
   logout: () => Promise<void>;
 }
 
@@ -47,6 +48,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const signup = async (data: SignupData): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const newUser = await AuthService.signup(data);
+      if (newUser) {
+        setUser(newUser);
+        toast.success('Account created successfully!');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      toast.error('Signup failed');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async (): Promise<void> => {
     setIsLoading(true);
     await AuthService.logout();
@@ -62,6 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isAuthenticated: !!user,
         isLoading,
         login,
+        signup,
         logout,
       }}
     >
