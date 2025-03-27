@@ -1,41 +1,111 @@
+# Daily Hero Reporter - Backend
 
-# Reports Application Backend
+This is the backend service for the Daily Hero Reporter application, built with NestJS and PostgreSQL.
 
-This is a NestJS backend for the Reports Application, providing authentication, user management, and report functionality.
+## Prerequisites
 
-## Installation
+- Node.js (v16 or higher)
+- Docker and Docker Compose
+- npm or yarn package manager
 
+## Project Setup
+
+1. **Clone the repository**
 ```bash
-# Install dependencies
-npm install
-
-# Set up your .env file
-# Make sure to configure your database connection
-
-# Start the development server
-npm run start:dev
+git clone https://github.com/samuelGodad/daily-hero-reporter.git
+cd daily-hero-reporter/backend
 ```
 
-## Available Endpoints
+2. **Install dependencies**
+```bash
+npm install
+```
+
+3. **Set up environment variables**
+Create a `.env` file in the backend directory with the following content:
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=reports_app
+NODE_ENV=development
+```
+
+4. **Start the database**
+```bash
+docker compose up -d
+```
+This will start a PostgreSQL container with the following configuration:
+- Database name: reports_app
+- Username: postgres
+- Password: postgres
+- Port: 5432
+
+5. **Start the backend server**
+```bash
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run build
+npm run start:prod
+```
+
+The backend server will run on `http://localhost:3000`
+
+## API Endpoints
 
 ### Authentication
-- POST /api/auth/register - Register a new user
-- POST /api/auth/login - Log in and get JWT token
-- POST /api/auth/logout - Log out (client-side only)
-
-### Users
-- GET /api/users/:id - Get user by ID
-- PATCH /api/users/:id - Update user
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/profile` - Get user profile (protected route)
 
 ### Reports
-- GET /api/reports - Get all reports for the current user
-- GET /api/reports/:id - Get a specific report
-- POST /api/reports - Create a new report
-- PATCH /api/reports/:id - Update a report
-- DELETE /api/reports/:id - Delete a report
+- `GET /api/reports` - Get all reports
+- `POST /api/reports` - Create a new report
+- `GET /api/reports/:id` - Get a specific report
+- `PUT /api/reports/:id` - Update a report
+- `DELETE /api/reports/:id` - Delete a report
 
-## Database Setup
+## Database Management
 
-This application uses PostgreSQL. You need to create a database named `reports_app` (or whatever you configured in the .env file).
+To access the PostgreSQL database directly:
+```bash
+docker exec -it reports_db psql -U postgres -d reports_app
+```
 
-The tables will be automatically created when you start the application with `synchronize: true` in development mode.
+Common PostgreSQL commands:
+- `\dt` - List all tables
+- `SELECT * FROM users;` - View all users
+- `SELECT * FROM reports;` - View all reports
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. **Database Connection Issues**
+   - Ensure Docker is running
+   - Check if the PostgreSQL container is running: `docker ps`
+   - Verify environment variables in `.env` file
+
+2. **Server Issues**
+   - Check if the backend server is running
+   - Look for error messages in the console
+   - Ensure all dependencies are installed
+
+3. **Common Problems**
+   - If registration/login stops working, check if the database container is running
+   - If you get "connection refused" errors, ensure the database is running
+   - If you get "module not found" errors, run `npm install` again
+
+## Development Guidelines
+
+- The backend uses TypeScript and follows NestJS best practices
+- All new features should include appropriate tests
+- Follow the existing code structure and patterns
+- Use proper error handling and validation
+
+## Support
+
+For any issues or questions, please contact the development team or create an issue in the repository.
